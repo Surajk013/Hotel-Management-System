@@ -6,76 +6,6 @@ import datetime
 
 app = Flask(__name__)
 CORS(app)
-import requests
-
-# Google Gemini API Endpoint
-GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateText"
-
-# Your Gemini API Key (Replace this with your actual key)
-API_KEY = "AIzaSyCJ_TNN8SrTKaFw32TJ6y9oXsIpisTz8is"
-
-def get_cheapest_hotel(location):
-    """
-    Fetches the cheapest hotel booking price using Gemini API.
-    """
-    prompt = f"Find the cheapest hotel booking price in {location} with details."
-
-    # API Request Payload
-    payload = {
-        "prompt": {"text": prompt},
-        "temperature": 0.7
-    }
-
-    # Making the API request
-    response = requests.post(
-        f"{GEMINI_API_URL}?key={API_KEY}",
-        json=payload
-    )
-
-    if response.status_code == 200:
-        data = response.json()
-        return parse_hotel_data(data)
-    else:
-        print("Error:", response.json())
-        return None
-
-def parse_hotel_data(data):
-    """
-    Parses the response from Gemini API and extracts hotel details.
-    """
-    try:
-        response_text = data["candidates"][0]["output"]["text"]
-        hotels = response_text.split("\n") 
-        
-        
-        min_price = float("inf")
-        cheapest_hotel = None
-
-        for hotel in hotels:
-            parts = hotel.split(",")  
-            if len(parts) >= 3:
-                try:
-                    price = float(parts[2].replace("$", "").strip())
-                    if price < min_price:
-                        min_price = price
-                        cheapest_hotel = hotel
-                except ValueError:
-                    continue
-        
-        return cheapest_hotel if cheapest_hotel else "No hotel data found."
-    
-    except KeyError:
-        return "Invalid API response format."
-
-if __name__ == "__main__":
-    location = input("Enter the location: ")
-    cheapest_hotel = get_cheapest_hotel(location)
-
-    if cheapest_hotel:
-        print("\nCheapest Hotel Found:")
-        print(cheapest_hotel)
-    else:
-        print("No hotels found.")
 
 # Database Configuration
 app.config['MYSQL_HOST'] = 'localhost'
@@ -89,6 +19,7 @@ mysql = MySQL(app)
 def home():
     return render_template('hotel-management.html')
 
+
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
@@ -96,14 +27,15 @@ def login():
     password = data.get("password")
 
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT id, username, password, role, name FROM users WHERE username = %s ", (username,))
+    cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
     user = cursor.fetchone()
     cursor.close()
 
     if user and user[2] == password:
-        return jsonify({"message": "Login successful", "user_id": user[0], "user_role": user[3], "user_name": user[4]})
+        return jsonify({"message": "Login successful", "user_id": user[0], "user_role": user[3]})
     else:
         return jsonify({"message": "Invalid credentials"}), 401
+
 
 @app.route("/rooms", methods=["GET"])
 def get_rooms():
@@ -114,25 +46,21 @@ def get_rooms():
     room_list = [{"id": room[0], "type": room[1], "number": room[2], "price": room[3], "status": room[4]} for room in rooms]
     return jsonify(room_list)
 
+
 @app.route("/bookings", methods=["GET"])
 def get_bookings():
-    user_id = request.headers.get('user_id')
-    if not user_id:
-         return jsonify({"message": "User id is required"}), 400
-
     cursor = mysql.connection.cursor()
     cursor.execute("""
         SELECT b.id, g.name, r.room_type, b.check_in, b.check_out, r.room_number
         FROM bookings b
         JOIN guests g ON b.guest_id = g.id
         JOIN rooms r ON b.room_id = r.id
-        JOIN users u ON g.id = u.id
-        WHERE u.id = %s
-    """, (user_id,))
+    """)
     bookings = cursor.fetchall()
     cursor.close()
     booking_list = [{"id": booking[0], "guest_name": booking[1], "room_type": booking[2], "check_in": booking[3], "check_out": booking[4], "room_number": booking[5]} for booking in bookings]
     return jsonify(booking_list)
+
 
 @app.route("/book", methods=["POST"])
 def book_room():

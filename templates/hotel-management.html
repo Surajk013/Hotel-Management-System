@@ -359,12 +359,9 @@
             .catch(error => console.error('Error fetching rooms:', error));
     }
 
-   function fetchBookings() {
-        fetch('http://127.0.0.1:5000/bookings', {
-            headers: {
-               'user_id': token,
-            }
-        })
+
+    function fetchBookings() {
+        fetch('http://127.0.0.1:5000/bookings')
             .then(response => response.json())
             .then(bookings => {
                 const bookingsList = document.getElementById('bookingsList');
@@ -373,20 +370,21 @@
                 bookings.forEach(booking => {
                     const bookingCard = document.createElement('div');
                     bookingCard.className = 'booking-card';
-                    bookingCard.innerHTML =
-                         <h3>Booking for ${booking.guest_name}</h3>
-                            <p>Room Type: ${booking.room_type}</p>
-                            <p>Check-in: ${booking.check_in}</p>
+                    bookingCard.innerHTML = `
+                          <h3>Booking for ${booking.guest_name}</h3>
+                           <p>Room Type: ${booking.room_type}</p>
+                          <p>Check-in: ${booking.check_in}</p>
                             <p>Check-out: ${booking.check_out}</p>
                             <button onclick="cancelBooking(${booking.id})">Cancel Booking</button>
-                       ;
+                       `;
                     bookingsList.appendChild(bookingCard)
                 });
             })
             .catch(error => console.error('Error fetching bookings:', error));
 
     }
-        function handleBooking(event) {
+
+    function handleBooking(event) {
         event.preventDefault();
         const formData = new FormData(event.target);
         const booking = {
