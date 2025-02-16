@@ -1,0 +1,46 @@
+*{
+
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: 'arial' , sans-serif ;
+}
+
+.form-container {
+  max-width: 500px;
+  margin:20px auto;
+  padding: 20px;
+  border: 1px solid #dddddd;
+  border-radius:8px;
+}
+
+.formElement {
+  margin-bottom : 15px ;
+}
+
+.formElement label {
+  display: block;
+}
+
+.formElement input, .formElement select {
+  width: 100% ;
+  padding: 8px ;
+  border: 1px solid #ddd ;
+}
+
+.btn-submit{
+  background: #2ecc71 ;
+  color: white ;
+  padding: 10px 20px ;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer ;
+}
+
+.btn-submit:hover {
+  background: #27ae60 ;
+}
+
+.hidden{
+  display: none;
+}
