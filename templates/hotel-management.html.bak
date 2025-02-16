@@ -91,16 +91,16 @@
             border-radius: 8px;
         }
 
-        .form-group {
+        .formElement {
             margin-bottom: 15px;
         }
 
-        .form-group label {
+        .formElement label {
             display: block;
             margin-bottom: 5px;
         }
 
-        .form-group input, .form-group select {
+        .formElement input, .formElement select {
             width: 100%;
             padding: 8px;
             border: 1px solid #ddd;
@@ -179,11 +179,11 @@
 <body>
 <div id="loginForm" class="form-container">
     <form id="login">
-        <div class="form-group">
+        <div class="formElement">
             <label>Username</label>
             <input type="text" id="username" required>
         </div>
-        <div class="form-group">
+        <div class="formElement">
             <label>Password</label>
             <input type="password" id="password" required>
         </div>
@@ -217,19 +217,19 @@
             <h2>New Booking</h2>
             <div class="form-container">
                 <form id="bookingForm">
-                    <div class="form-group">
+                    <div class="formElement">
                         <label>Guest Name</label>
                         <input type="text" name="guestName" required>
                     </div>
-                    <div class="form-group">
+                    <div class="formElement">
                         <label>Email</label>
                         <input type="email" name="email" required>
                     </div>
-                    <div class="form-group">
+                    <div class="formElement">
                         <label>Phone</label>
                         <input type="text" name="phone" required>
                     </div>
-                    <div class="form-group">
+                    <div class="formElement">
                         <label>Room Type</label>
                         <select name="roomType" required>
                             <option value="single">Single</option>
@@ -237,11 +237,11 @@
                             <option value="suite">Suite</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="formElement">
                         <label>Check-in Date</label>
                         <input type="date" name="checkIn" required>
                     </div>
-                    <div class="form-group">
+                    <div class="formElement">
                         <label>Check-out Date</label>
                         <input type="date" name="checkOut" required>
                     </div>
