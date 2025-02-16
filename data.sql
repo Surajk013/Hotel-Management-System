@@ -4,14 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-     role ENUM('user','staff') DEFAULT 'user'
-);
-
-CREATE TABLE IF NOT EXISTS guests (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255),
-    phone VARCHAR(20)
+     role ENUM('guest','staff','admin') DEFAULT 'guest'
 );
 
 CREATE TABLE IF NOT EXISTS rooms (
@@ -34,13 +27,13 @@ CREATE TABLE IF NOT EXISTS bookings (
 );
 
 
--- Insert some initial users
-INSERT INTO users (id,username, password,role) VALUES
-(1,'user1', 'password123','user'),
-(2,'user', 'password','user'),
-(3,'suraj', 'pword','user'),
-(4,'varun', 'pass','user'),
-(5,'karan', 'pass123','user'),
+-- Insert some initial guests
+INSERT INTO users  (id,username, password,role) VALUES
+(1,'guest1', 'password123','guest'),
+(2,'guest', 'password','guest'),
+(3,'suraj', 'pword','guest'),
+(4,'varun', 'pass','guest'),
+(5,'karan', 'pass123','guest'),
 (6,'staff1','staffpass','staff'),
 (7,'staff','staffpass','staff'),
 (8,'vikas','staffpass','staff'),
