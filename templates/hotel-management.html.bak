@@ -196,10 +196,10 @@
         <h1>Hotel Management System</h1>
     </div>
     <div class="nav">
-        <button onclick="showSection('rooms');fetchRooms()">Show Rooms</button>
-        <button onclick="showSection('bookings');fetchBookings()">My Bookings</button>
-        <button onclick="showSection('newBooking')">Book Room</button>
-        <button onclick="showSection('chatSection')">Chat With Me</button>
+        <button onclick="showsection('rooms');fetchrooms()">show rooms</button>
+        <button onclick="showsection('bookings');fetchbookings()">my bookings</button>
+        <button onclick="showsection('newbooking')">book room</button>
+        <button onclick="showsection('chatsection')">chat with me</button>
     </div>
 
     <div class="container">

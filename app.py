@@ -18,7 +18,6 @@ mysql=MySQL(app)
 @app.route('/')
 def home():
     print("rendering index.html")
-    print("enter render mode ")
     return render_template('index.html')
     print("rendered")
 
@@ -34,7 +33,7 @@ def login():
 
     cursor.close()
 
-    print(f"trying to print stuff:{user} {user[0]},{user[2]}")
+    print(f"User's entire data:{user}")
     print(username,password)
     if user and user[2] == password:
         print("right pwd")

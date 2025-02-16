@@ -46,6 +46,8 @@ function handleLogin(event){
       alert("Login Successful");
       token=data.user_id;
     userRole=data.user_role;
+      if(userRole == 'guest' ):
+        showSection('guestPage');
     showSection('appContent');
     showAppContent();
   } else {
