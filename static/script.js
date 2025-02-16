@@ -25,7 +25,7 @@ function showAppContent()
   }
 }
 function showSection(sectionId){
-  document.querySelectorAll('content','#loginForm').forEach(section =>{
+  document.querySelectorAll('.content,#loginForm').forEach(section =>{
     section.classList.add('hidden');
   });
   document.getElementById(sectionId).classList.remove('hidden');
@@ -34,7 +34,7 @@ function showSection(sectionId){
 function handleLogin(event){
   event.preventDefault();
   const username=document.getElementById('username').value;
- const password=document.getElementById('password').value;
+  const password=document.getElementById('password').value;
   fetch('http://127.0.0.1:5000/login',{
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -42,7 +42,8 @@ function handleLogin(event){
   })
   .then(response => response.json())
   .then(data => {
-    if(data.message === 'Login successful'){
+    if(data.user_id){
+      alert("Login Successful");
       token=data.user_id;
     userRole=data.user_role;
     showSection('appContent');
