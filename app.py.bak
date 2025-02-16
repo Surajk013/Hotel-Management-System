@@ -29,7 +29,7 @@ def login():
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
     user = cursor.fetchone()
-    cursor.close()
+5    cursor.close()
 
     if user and user[2] == password:
         return jsonify({"message": "Login successful", "user_id": user[0], "user_role": user[3]})

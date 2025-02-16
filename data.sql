@@ -37,7 +37,9 @@ INSERT INTO users  (id,username, password,role) VALUES
 (6,'staff1','staffpass','staff'),
 (7,'staff','staffpass','staff'),
 (8,'vikas','staffpass','staff'),
-(9,'rahul','staffpass','staff');
+(9,'rahul','staffpass','staff'),
+(10,'admin','ooo','admin'),
+(11,'boss','8055','admin');
 
 -- Inserting Sample Rooms
 INSERT INTO rooms (room_type, room_number, price) VALUES

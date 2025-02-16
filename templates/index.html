@@ -23,8 +23,83 @@
       </form>
     </div>
 
-    <div id='loginContent' class="hidden" > 
+    <div id='guestPage' class="hidden" > 
       <h1>Developing</h1>
+      <nav class="div">
+        <button onClick="showSection('rooms');fetchRooms()">Show Rooms</button>
+        <button onClick="showSection('Bookings');fetchRooms()">Book Room</button>
+        <button onClick="showSection('newBookings');fetchRooms()">My Bookings </button>
+        <button onClick="showSection('chatSection');fetchRooms()">Chat With ME ! </button>
+      </nav>
+      <div class='container'>
+        <div id="rooms" class="content hidden">
+          <h1>Available Rooms</h1>
+          <div class="room-grid" id="roomGrid">            
+          </div>
+        </div>
+
+        <div id="bookings" class="content hidden">
+          <h2>My Bookings</h2>
+          <div id="bookingList"></div>
+        </div>
+        <div id="newBookings" class="content hidden">
+          <h1>New Booking</h1>
+          <div class="form-container">
+            <form id="bookingForm">
+              <div class="formElement">
+                <label>Guest Name</label>
+                <input type="text" name="guestName" required>
+              </div>
+              <div class="formElement">
+                <label>Email</label>
+                <input type="email" name="email" required>
+              </div>
+              <div class="formElement">
+                <label>Phone</label>
+                <input type="text" name="phone" required>
+              </div>
+              <div class="formElement">
+                <label>Room Type</label>
+                <select name="roomType" required>
+                  <option value="single">Single</option>
+                  <option value="double">Double</option>
+                  <option value="Suite">Suite</option>
+                </select>
+              </div>
+              <div class="form Element">
+                <label>Check-in Date</label>
+                <input type="date" name="checkin" required>
+              </div>
+              <button type="submit" class="btn-submit">Book Room</button>
+            </form>
+          </div>
+        </div>
+        <div id="chatSection" class="content hidden">
+          <h2>Chat with Us</h2>
+          <div class="chat-container">
+            <div class="chat-log" id="chatLog"></div>
+            <div class="chat-input-container">
+              <input type="text" id="chatInput" placeholder="Type your Message . . . "/>
+              <button id="sendButton">Send</button>
+            </div>
+            <div class="chat-prompts" id="chatPrompts">
+              <span onclick="setChatInput('Book a single room')">Book a single room</span>
+              <span onclick="setChatInput('Book a double room')">Book a double room</span>
+              <span onclick="setChatInput('Book a suit')">Book a suite </span>
+              <span onclick="setChatInput('Cancel Booking ID')">Cancel Booking \ID\ </span>
+              <span onclick="setChatInput('Show my bookings')">Show my bookings</span>
+              <span onclick="setChatInput('Show price for Single')">Show price for single</span>
+              <span onclick="setChatInput('Show price for double')">Show price for double</span>
+              <span onclick="setChatInput('Show price for suit')">Show price for suit</span>
+              <span onclick="setChatInput('Show available rooms')">Show available Rooms</span>
+
+              
+            </div>
+              
+            </div>
+            
+          </div>
+    </div>
     </div>
 
   </body>
