@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginForm = document.getElementById('login');
   const bookingForm = document.getElementById('bookingForm');
   const sendButton = document.getElementById('sendButton');
-  //token  = localStorage.getItem('token');
-  //userRole = localStorage.getItem('userRole'); 
+  token  = localStorage.getItem('token');
+  userRole = localStorage.getItem('userRole'); 
   if(loginForm) loginForm.addEventListener('submit',handleLogin); 
   if(bookingForm) bookingForm.addEventListener('submit',handleBooking);
   if(sendButton) sendButton.addEventListener('click',handleChatSend);
@@ -57,8 +57,8 @@ function handleLogin(event){
       alert("Login Successful");
       token=data.user_id;
       userRole=data.user_role;     
-      //localStorage.setItem('token',data.user_id);
-      //localStorage.setItem('userRole',data.user_role);
+      localStorage.setItem('token',data.user_id);
+      localStorage.setItem('userRole',data.user_role);
       //if(userRole == 'guest' ):
       //  showSection('guestPage');
       showSection('appContent');
