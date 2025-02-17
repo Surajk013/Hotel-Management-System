@@ -23,7 +23,7 @@
       </form>
     </div>
 
-    <div id='guestPage' class="hidden" > 
+    <div id='appContent' class="hidden" > 
       <h1>Developing</h1>
       <nav class="div">
         <button onClick="showSection('rooms');fetchRooms()">Show Rooms</button>
@@ -48,15 +48,15 @@
             <form id="bookingForm">
               <div class="formElement">
                 <label>Guest Name</label>
-                <input type="text" name="guestName" required>
+                <input type="text" name="guestName" value="asd" required>
               </div>
               <div class="formElement">
                 <label>Email</label>
-                <input type="email" name="email" required>
+                <input type="email" name="email"  value="asd@gmail.com" required>
               </div>
               <div class="formElement">
                 <label>Phone</label>
-                <input type="text" name="phone" required>
+                <input type="text" name="phone" value="213" required>
               </div>
               <div class="formElement">
                 <label>Room Type</label>
@@ -66,9 +66,13 @@
                   <option value="Suite">Suite</option>
                 </select>
               </div>
-              <div class="form Element">
+              <div class="formElement">
                 <label>Check-in Date</label>
-                <input type="date" name="checkin" required>
+                <input type="date" name="checkIn" value="2025-02-02" required>
+              </div>
+              <div class="formElement">
+                <label>Check-out Date</label>
+                <input type="date" name="checkOut" value="2025-02-25" required>
               </div>
               <button type="submit" class="btn-submit">Book Room</button>
             </form>
@@ -90,7 +94,7 @@
               <span onclick="setChatInput('Show my bookings')">Show my bookings</span>
               <span onclick="setChatInput('Show price for Single')">Show price for single</span>
               <span onclick="setChatInput('Show price for double')">Show price for double</span>
-              <span onclick="setChatInput('Show price for suit')">Show price for suit</span>
+              <span onclick="setChatInput('Show price for suite')">Show price for suite</span>
               <span onclick="setChatInput('Show available rooms')">Show available Rooms</span>
 
               

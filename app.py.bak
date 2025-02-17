@@ -3,21 +3,22 @@ from flask_mysqldb import MySQL
 from flask_cors import CORS
 import re
 import datetime
+import config
 
 app = Flask(__name__)
 CORS(app)
 
 # Database Configuration
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'suraj'
-app.config['MYSQL_PASSWORD'] = 'test'
-app.config['MYSQL_DB'] = 'hotel_management'
+app.config['MYSQL_HOST'] = config.host 
+app.config['MYSQL_USER'] = config.user 
+app.config['MYSQL_PASSWORD'] = config.pwd 
+app.config['MYSQL_DB'] = config.db 
 mysql = MySQL(app)
 
 
 @app.route('/')
 def home():
-    return render_template('hotel-management.html')
+    return render_template('hotel-management.html.bak')
 
 
 @app.route("/login", methods=["POST"])
@@ -29,7 +30,7 @@ def login():
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
     user = cursor.fetchone()
-5    cursor.close()
+    cursor.close()
 
     if user and user[2] == password:
         return jsonify({"message": "Login successful", "user_id": user[0], "user_role": user[3]})

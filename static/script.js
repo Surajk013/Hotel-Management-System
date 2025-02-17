@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const sendButton = document.getElementById('sendButton');
   if(loginForm) loginForm.addEventListener('submit',handleLogin); 
   if(bookingForm) bookingForm.addEventListener('submit',handleBooking);
-  if(sendButton) sendButton.addEventListerner('click',handleChatSend);
+  if(sendButton) sendButton.addEventListener('click',handleChatSend);
   
   if(!token){
     showSection('loginForm');
@@ -22,7 +22,7 @@ function showAppContent()
 {
   showSection('rooms');
   fetchRooms();
-  if (userRole==='staff') {
+  if (userRole === 'staff') {
     showSection('bookings');
     fetchBookings();
     
@@ -50,8 +50,8 @@ function handleLogin(event){
       alert("Login Successful");
       token=data.user_id;
     userRole=data.user_role;
-      if(userRole == 'guest' ):
-        showSection('guestPage');
+      //if(userRole == 'guest' ):
+      //  showSection('guestPage');
     showSection('appContent');
     showAppContent();
   } else {
@@ -90,8 +90,9 @@ function fetchBookings(){
   fetch('http://127.0.0.1:5000/bookings')
     .then(response => response.json())
     .then(bookings => {
-      const bookingsList = doscument.getElementById('bookingList');
+      const bookingsList = document.getElementById('bookingList');
       bookingList.innerHTML='';
+      console.log("trying . . . ");
       bookings.forEach(booking => {
         const bookingCard = document.createElement('div');
        bookingCard.className = 'booking-card';
@@ -111,6 +112,7 @@ function fetchBookings(){
 function handleBooking(event){
   event.preventDefault();
   const formData=  new FormData(event.target);
+  console.log("fetching the userrrrrrrrrrrrrrrrrr data to form");
   const booking = {
     guestName: formData.get('guestName'),
     email: formData.get('email'),
@@ -119,13 +121,15 @@ function handleBooking(event){
     checkIn: formData.get('checkIn'),
     checkOut:formData.get('checkOut')
   };
+  console.log(booking);
 
   fetch('http://127.0.0.1:5000/book', {
     method: 'POST',
-    header: {'Content-Type':'application/json'},
+    headers: {'Content-Type':'application/json'},
     body: JSON.stringify(booking)
   })
 
+    //console.log("data sent to backend")
     .then(response => response.json())
     .then(data => {
       if (data.message === 'Booking successful'){
@@ -151,7 +155,7 @@ function cancelBooking(bookingId){
   fetch('http://127.0.0.1:5000/cancel_booking',{
     method:'POST',
     headers: {'Content-Type':'application/json'},
-    body:JSON.stringy({bookingId: bookingId})
+    body:JSON.stringify({bookingId: bookingId})
   })
 
     .then(response => response.json())
@@ -175,7 +179,7 @@ function handleChatSend(){
   if(!message) return;
   appendMessage('You: ',message,true);
   messageInput.value='';
-  fetch('http://127.0.0.1:5000//chat',{
+  fetch('http://127.0.0.1:5000/chat',{
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({message:message})
@@ -184,14 +188,15 @@ function handleChatSend(){
     .then(data => {
       appendMessage('Bot:',data.message,false);
       if (data.action === 'prompt_booking') {
-        showSection('newBooking');
+        showSection('newBookings');
+        fetchRooms();
       } else if(data.action === 'show_rooms'){
-        showSection('room');
+        showSection('rooms');
         fetchRooms();
       }
       else if(data.action === 'show_bookings'){
         showSection('bookings');
-        fetchBooking();
+        fetchBookings();
       }
       else if(data.nav === 'bookings'){
         showSection('bookings');
