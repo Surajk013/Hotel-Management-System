@@ -42,7 +42,7 @@ def login():
         print("wrong pwd")
         return jsonify({"message":"Invalid Credentials"}),401
 
-@appl.route("/rooms",methods=["GET"])
+@app.route("/rooms",methods=["GET"])
 def get_rooms():
     cursor = mysql.connection.cursor()
     cursor.execute("select * from rooms")
@@ -51,8 +51,9 @@ def get_rooms():
     room_list = [{"id":room[0],"type":room[1],"number":room[2],"price":room[3],"status":room[4]}for room in rooms]
     return jsonify(room_list)
 
-@app.route("/bookings",method=["GET"])
+@app.route("/bookings",methods=["GET"])
 def get_bookings():
+    print("Inside /bookings")
     cursor=mysql.connection.cursor()
     cursor.execute("""
 select b.id,g.name,r.room_type,b.check_in,b.check_out,r.room_number
@@ -65,9 +66,11 @@ select b.id,g.name,r.room_type,b.check_in,b.check_out,r.room_number
     booking_list=[{"id":booking[0],"guest_name":booking[1],"room_type":booking[2],"check_in":booking[3],"check_out":booking[4],"room_number":booking[5]} for booking in bookings ]
     return jsonify(booking_list)
 
-@arr.route("/book",method=["POST"])
+@app.route("/book",methods=["POST"])
 def book_room():
+    print("in book_room method")
     data=request.get_json()
+    print("about to fetch user details")
     guest_name=data.get("guestName")
     room_type=data.get("roomType")
     check_in=data.get("checkIn")
@@ -75,13 +78,15 @@ def book_room():
     email=data.get("email")
     phone=data.get("phone")
 
+    print("fetched used details")
     cursor = mysql.connection.cursor()
 
     cursor.execute("insert into guests (name, email , phone) values (%s, %s, %s)",(guest_name,email,phone))
     mysql.connection.commit()
     guest_id=cursor.lastrowid
 
-    cursor.execute("select id,room_number from rooms where room_type = %s and is_available = 'available', LIMIT 1 ", (room_type,))
+    print("! added entry to guest! ")
+    cursor.execute("select id,room_number from rooms where room_type = %s and is_available = 'available' LIMIT 1 ", (room_type,))
     available_room=cursor.fetchone()
 
     if not available_room:
@@ -91,13 +96,14 @@ def book_room():
     room_id = available_room[0]
     room_number = available_room[1]
 
-    cursor.execute("insert into bookings  (guest_id,room_id,check_in,check_out) values (%s,%s,%s)",(guest_id,room_id,check_in,check_out))
+    cursor.execute("insert into bookings  (guest_id,room_id,check_in,check_out) values (%s,%s,%s,%s)",(guest_id,room_id,check_in,check_out))
     mysql.connection.commit()
 
+    print("! added entry to bookings! ")
     cursor.execute("update rooms set is_available = 'occupied' where id = %s",(room_id,))
     mysql.connection.commit()
     cursor.close()
-
+    print("! room status updated ! ")
     return jsonify({"message":"Booking successful","booking":{
                     "guestName":guest_name,
                     "roomType":room_type,
@@ -108,7 +114,9 @@ def book_room():
     
 @app.route("/cancel_booking",methods=['POST'])
 def cancel_booking():
+    print("inside cancel booking")
     data=request.get_json()
+    print("fetched data")
     booking_id=data.get("bookingId")
     if not booking_id:
         return jsonify({"message":"Booking ID is required"}),400
@@ -116,14 +124,15 @@ def cancel_booking():
 
     cursor.execute("select room_id from bookings where id = %s",(booking_id,))
     booking_data= cursor.fetchone()
+    print("tred to fetch booking data ")
     if not booking_data:
-        return jsonify("message":"Booking not found"),400 
+        return jsonify({"message":"Booking not found"}),400 
 
     room_id = booking_data[0]
 
-    cursor.execute("delete form bookings where id =%s",(booking_id,))
+    cursor.execute("delete from bookings where id = %s",(booking_id,))
     mysql.connection.commit()
-
+    print("removed from db")
     cursor.execute("update rooms set is_available='available' where id= %s ", (room_id,))
     mysql.connection.commit()
 
@@ -134,12 +143,13 @@ def cancel_booking():
 def chat():
     data=request.get_json()
     message=data.get('message','').lower()
-    response=process_chat_message()
+    response=process_chat_message(message)
     return jsonify(response)
 
 def process_chat_message(message):
+    print("processing chat")
     if "book" in message and ("single" in message or "double" in message or "suite" in message):
-        room_type = "single" if "single" in message else "double" if "double" in message else "suite" if "suite" in message 
+        room_type = "single" if "single" in message else "double" if "double" in message else "suite" 
         return{
                 "action":"prompt_booking",
                 "message":f"Okay ! I can help with booking a {room_type} room for you."
@@ -196,7 +206,7 @@ def cancel_booking_from_chat(booking_id):
             }
 
 def fetch_room_price_from_chat(room_type):
-    cursor=msql.connection.cursor()
+    cursor=mysql.connection.cursor()
     cursor.execute("select price from rooms where room_type = %s", (room_type, ))
     price_data = cursor.fetchone()
     cursor.close()
