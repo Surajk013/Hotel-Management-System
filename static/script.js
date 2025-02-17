@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginForm = document.getElementById('login');
   const bookingForm = document.getElementById('bookingForm');
   const sendButton = document.getElementById('sendButton');
+  //token  = localStorage.getItem('token');
+  //userRole = localStorage.getItem('userRole'); 
   if(loginForm) loginForm.addEventListener('submit',handleLogin); 
   if(bookingForm) bookingForm.addEventListener('submit',handleBooking);
   if(sendButton) sendButton.addEventListener('click',handleChatSend);
@@ -11,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if(!token){
     showSection('loginForm');
   }else{
+    console.log("you have the token, showing app content: ");
+    showSection("appContent");
     showAppContent(); 
   }
   
@@ -20,9 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function showAppContent()
 {
+  console.log("show rooms section ");
   showSection('rooms');
+  console.log("fetching rooms");
   fetchRooms();
   if (userRole === 'staff') {
+    console.log("userRole is detected as staff, showing all bookings")
     showSection('bookings');
     fetchBookings();
     
@@ -49,18 +56,19 @@ function handleLogin(event){
     if(data.user_id){
       alert("Login Successful");
       token=data.user_id;
-    userRole=data.user_role;
+      userRole=data.user_role;     
+      //localStorage.setItem('token',data.user_id);
+      //localStorage.setItem('userRole',data.user_role);
       //if(userRole == 'guest' ):
       //  showSection('guestPage');
-    showSection('appContent');
-    showAppContent();
+      showSection('appContent');
+      showAppContent();
   } else {
     alert('Invalid credentials');
   }
 })
   .catch(error => {
     console.error('Error logging in: ',error)
-
     alert('An error occurred. ')
   });
 }
