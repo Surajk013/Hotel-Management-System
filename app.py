@@ -112,6 +112,44 @@ def book_room():
                     "roomNumber":room_number
                     }})
     
+
+@app.route("/createUsr",methods=['POST'])
+def createUser():
+    print("Inside createUser")
+    data=request.get_json()
+    print("fetched data")
+    userName=data.get("usrName")   
+    userEmail=data.get("usrEmail")
+    userPNumber=data.get("usrPNumber")
+    userPword=data.get("usrPword")
+    userAge=data.get("usrAge")
+   
+    print("fetched user entry . . . ")
+    cursor = mysql.connection.cursor()
+    dupEmail= cursor.execute("select * from users where email = %s",(userEmail,)) 
+     
+    dupPNumber=cursor.execute("select * from users where pNumber = %s",(userPNumber,) )
+    
+    
+    if dupEmail :
+        return jsonify({
+            "message":"dupEmail"
+    })
+    elif dupPNumber:
+        return jsonify ({
+            "message":"dupNumber"
+        })
+    elif (int)(userAge) < 18:
+        return jsonify({
+            "message":"age"
+        })
+    cursor.execute("insert into users(username,password,role,email,Pnumber,age) values (%s,%s,%s,%s,%s,%s)",(userName,userPword,"guest",userEmail,userPNumber,userAge))
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({
+      "message":"created"
+    })
+
 @app.route("/cancel_booking",methods=['POST'])
 def cancel_booking():
     print("inside cancel booking")

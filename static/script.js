@@ -4,12 +4,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginForm = document.getElementById('login');
   const bookingForm = document.getElementById('bookingForm');
   const sendButton = document.getElementById('sendButton');
-  token  = localStorage.getItem('token');
-  userRole = localStorage.getItem('userRole'); 
+  const createUsrBtn = document.getElementById('createUsrBtn');
+  console.log("token created");
+  //token  = localStorage.getItem('token');
+  //userRole = localStorage.getItem('userRole'); 
   if(loginForm) loginForm.addEventListener('submit',handleLogin); 
   if(bookingForm) bookingForm.addEventListener('submit',handleBooking);
   if(sendButton) sendButton.addEventListener('click',handleChatSend);
-  
+  if(createUsrBtn) createUsrBtn.addEventListener('click',handleUsrCreation);
+
   if(!token){
     showSection('loginForm');
   }else{
@@ -19,6 +22,66 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
 });
+
+
+function handleUsrCreation(){
+  console.log("click cpatued");
+  console.log("redirection to  createUsr ");
+  showSection('createUsr');
+  console.log("hoping form is submitted");
+  const createuser = document.getElementById('createUsr');
+  if(createuser)  createuser.addEventListener('submit',createUsr);
+  console.log("submitted new user data to backend"); 
+}
+
+function createUsr(event){
+  console.log("inside createUse");
+  event.preventDefault();
+  const formData=new FormData(event.target);
+  console.log("Got form");
+  const newUsr={
+    usrName: formData.get('newUsr'),
+    usrEmail: formData.get('newEmail'),
+    usrPNumber: formData.get('newPNumber'),
+    usrPword: formData.get('Pword'),
+    usrAge: formData.get('age')
+  }
+  console.log("fetching form data");
+  console.log(newUsr);
+
+  fetch('http://127.0.0.1:5000/createUsr', {
+    method:'POST',
+    headers: {'Content-Type':'application/json'},
+    body:JSON.stringify(newUsr)
+  })
+
+  .then(response => response.json())
+  .then(data => {
+      if(data.message === 'dupEmail'){
+        alert('A user already exits with this email...');
+      }
+      else if(data.message === 'dupNumber'){
+        alert('A user already exists with this number . . .');
+      }
+      else if(data.message === 'created'){
+        alert('User created successful ! ');
+        showSection('LoginForm');
+      }
+      else if(data.message === 'age'){
+        alert('grow up kiddo, \n or ask your paernts ! ')
+      }
+      else{
+        alert('Booking failed: '+data.message);
+      }
+    })
+
+    .catch(error =>{
+      console.error('Error booking room: ',error);
+      alert('An error occured. ');
+    })
+
+   
+}
 
 
 
@@ -57,8 +120,8 @@ function handleLogin(event){
       alert("Login Successful");
       token=data.user_id;
       userRole=data.user_role;     
-      localStorage.setItem('token',data.user_id);
-      localStorage.setItem('userRole',data.user_role);
+      //localStorage.setItem('token',data.user_id);
+      //localStorage.setItem('userRole',data.user_role);
       //if(userRole == 'guest' ):
       //  showSection('guestPage');
       showSection('appContent');
