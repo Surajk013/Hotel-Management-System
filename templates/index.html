@@ -3,10 +3,9 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>development</title>
+    <title>HMS</title>
     <link href="../static/style.css" rel="stylesheet">
     <script src="../static/script.js"></script>
-    Hotel Management System
   </head>
   <body>
     <div id="loginForm" class = "form-container">
@@ -24,13 +23,15 @@
     </div>
 
     <div id='appContent' class="hidden" > 
-      <h1>Developing</h1>
-      <nav class="div">
+      <div class="header">
+        <h1>Hotel Management System</h1>
+      </div>
+      <div class="nav">
         <button onClick="showSection('rooms');fetchRooms()">Show Rooms</button>
-        <button onClick="showSection('Bookings');fetchRooms()">Book Room</button>
-        <button onClick="showSection('newBookings');fetchRooms()">My Bookings </button>
+        <button onClick="showSection('Bookings');fetchRooms()">My Bookings</button>
+        <button onClick="showSection('newBookings');fetchRooms()">Book Room</button>
         <button onClick="showSection('chatSection');fetchRooms()">Chat With ME ! </button>
-      </nav>
+      </div>
       <div class='container'>
         <div id="rooms" class="content hidden">
           <h1>Available Rooms</h1>
