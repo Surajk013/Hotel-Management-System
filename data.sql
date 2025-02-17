@@ -4,7 +4,10 @@ CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-     role ENUM('guest','staff','admin') DEFAULT 'guest'
+     role ENUM('guest','staff','admin') DEFAULT 'guest',
+    email VARCHAR(255) NOT NULL UNIQUE,
+    pNumber BIGINT NOT NULL UNIQUE,
+    age INT NOT NULL  
 );
 
 CREATE TABLE IF NOT EXISTS guests (
@@ -34,21 +37,19 @@ CREATE TABLE IF NOT EXISTS bookings (
 );
 
 
--- Insert some initial guests
-INSERT INTO users  (id,username, password,role) VALUES
-(1,'guest1', 'password123','guest'),
-(2,'guest', 'dev','guest'),
-(3,'suraj', 'pword','guest'),
-(4,'varun', 'pass','guest'),
-(5,'karan', 'pass123','guest'),
-(6,'staff1','staffpass','staff'),
-(7,'staff','staffpass','staff'),
-(8,'vikas','staffpass','staff'),
-(9,'rahul','staffpass','staff'),
-(10,'admin','ooo','admin'),
-(11,'boss','8055','admin');
+INSERT INTO users (id,username, password,role,email,pNumber,age) VALUES
+(1,'guest1', 'password123','guest','t@gmail.com',1236597840,21),
+(2,'guest', 'dev','guest','r@gmail.com',6541239874,22),
+(3,'suraj', 'pword','guest','l@gmail.com',4587219630,45),
+(4,'varun', 'pass','guest','i@gmail.com',58749632510,88),
+(5,'karan', 'pass123','guest','k@gmail.com',985636521470,44),
+(6,'staff1','staffpass','staff','st@gmail.com',58623947128,99),
+(7,'staff','staffpass','staff','uu@gmail.com',5469823710,80),
+(8,'vikas','staffpass','staff','ah@gmail.com',4125879635210,22),
+(9,'rahul','staffpass','staff','lll@gmail.com',46523189750,55),
+(10,'admin','ooo','admin','admin@gmail.com',2013654987,90),
+(11,'boss','8055','admin','admin2@gmail.com',65893245170,55);
 
--- Inserting Sample Rooms
 INSERT INTO rooms (room_type, room_number, price) VALUES
 ('single', 101, 100.00),
 ('single', 102, 100.00),

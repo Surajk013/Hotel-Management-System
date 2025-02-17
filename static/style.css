@@ -96,16 +96,17 @@
   border: 1px solid #ddd ;
 }
 
-.btn-submit{
+.btn-submit , .btn-createUsr{
   background: #2ecc71 ;
   color: white ;
   padding: 10px 20px ;
   border: none;
   border-radius: 4px;
   cursor: pointer ;
+  margin-bottom: 5px;
 }
 
-.btn-submit:hover {
+.btn-submit:hover , btn-createUsr:hover{
   background: #27ae60 ;
 }
 
