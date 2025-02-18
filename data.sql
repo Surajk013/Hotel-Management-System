@@ -2,7 +2,7 @@
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL UNIQUE,
+    username VARCHAR(255) NOT NULL ,
     password VARCHAR(255) NOT NULL,
      role ENUM('guest','staff','admin') DEFAULT 'guest',
     email VARCHAR(255) NOT NULL UNIQUE,

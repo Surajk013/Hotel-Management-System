@@ -53,19 +53,22 @@ def get_rooms():
     print("fetched all rooms , returning room list")
     return jsonify(room_list)
 
-@app.route("/bookings",methods=["GET"])
+@app.route("/bookings",methods=["GET","POST"])
 def get_bookings():
-    print("Inside /bookings")
+    print("Inside bookings")
+    data=request.get_json()
+    userid=data
+    print(userid)
     cursor=mysql.connection.cursor()
     cursor.execute("""
-select b.id,g.name,r.room_type,b.check_in,b.check_out,r.room_number
+select b.id,g.name,r.room_type,b.check_in,b.check_out,r.room_number,r.price
     from bookings b 
     join guests g on b.guest_id = g.id 
-    join rooms r on b.room_id = r.id
-    """) 
+    join rooms r on b.room_id = r.id where b.userid=%s
+    """,(userid,))
     bookings=cursor.fetchall()
     cursor.close()
-    booking_list=[{"id":booking[0],"guest_name":booking[1],"room_type":booking[2],"check_in":booking[3],"check_out":booking[4],"room_number":booking[5]} for booking in bookings ]
+    booking_list=[{"id":booking[0],"guest_name":booking[1],"room_type":booking[2],"price":booking[6],"check_in":booking[3],"check_out":booking[4],"room_number":booking[5]} for booking in bookings ]
     return jsonify(booking_list)
 
 @app.route("/book",methods=["POST"])
@@ -79,11 +82,19 @@ def book_room():
     check_out=data.get("checkOut")
     email=data.get("email")
     phone=data.get("phone")
+    userid=data.get("token")
+    print(userid)
+    print(check_in)
+    print(check_out)
 
+    if check_in > check_out :
+        return jsonify({
+            "message":"The check in is after the checkout! "
+        })
     print("fetched used details")
     cursor = mysql.connection.cursor()
 
-    cursor.execute("insert into guests (name, email , phone) values (%s, %s, %s)",(guest_name,email,phone))
+    cursor.execute("insert into guests (name, email , phone, userid) values (%s, %s, %s, %s)",(guest_name,email,phone,userid))
     mysql.connection.commit()
     guest_id=cursor.lastrowid
 
@@ -98,7 +109,7 @@ def book_room():
     room_id = available_room[0]
     room_number = available_room[1]
 
-    cursor.execute("insert into bookings  (guest_id,room_id,check_in,check_out) values (%s,%s,%s,%s)",(guest_id,room_id,check_in,check_out))
+    cursor.execute("insert into bookings  (guest_id,room_id,check_in,check_out,userid) values (%s,%s,%s,%s,%s)",(guest_id,room_id,check_in,check_out,userid))
     mysql.connection.commit()
 
     print("! added entry to bookings! ")
@@ -195,7 +206,8 @@ def process_chat_message(message):
                 "message":f"Okay ! I can help with booking a {room_type} room for you."
                 }
 
-    elif "cancel booking" in message and re.search(r'\d+',message):
+    elif "cancel" and "booking" in message and re.search(r'\d+',message):
+        print("success")
         booking_id = re.search(r'\d+',message).group(0)
         return cancel_booking_from_chat(booking_id)
 
@@ -221,6 +233,7 @@ def process_chat_message(message):
 
 
 def cancel_booking_from_chat(booking_id):
+    print("inside cancel bookig function")
     cursor=mysql.connection.cursor()
     cursor.execute("select room_id from bookings where id = %s", (booking_id,))
     booking_data=cursor.fetchone()
@@ -232,7 +245,7 @@ def cancel_booking_from_chat(booking_id):
                 }
     room_id = booking_data[0]
     
-    cursor.execute("delete from boookings where id = %s", (booking_id,))
+    cursor.execute("delete from bookings where id = %s", (booking_id,))
     mysql.connection.commit()
 
     cursor.execute("update rooms set is_available = 'available' where id = %s",(room_id,))
@@ -247,13 +260,15 @@ def cancel_booking_from_chat(booking_id):
 
 def fetch_room_price_from_chat(room_type):
     cursor=mysql.connection.cursor()
-    cursor.execute("select price from rooms where room_type = %s", (room_type, ))
+    cursor.execute("select * from rooms where room_type = %s and is_available='available' ORDER BY price ASC LIMIT 1", (room_type, ))
     price_data = cursor.fetchone()
     cursor.close()
     if price_data:
         return{
                 "action":"chat_message",
-                "message":f"price for {room_type} room is : ${price_data[0]}",
+                "message":f"price for {room_type} room is : ${price_data[3]},\n"
+                f"The room number is:{price_data[2]} \n,"
+                f"Its ID is: {price_data[0]}",
                 }
     else:
         return {
