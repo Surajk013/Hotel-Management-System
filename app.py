@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, render_template 
+import bcrypt
 from flask_mysqldb import MySQL 
 from flask_cors import CORS 
 import re 
@@ -35,7 +36,10 @@ def login():
 
     print(f"User's entire data:{user}")
     print(username,password)
-    if user and user[2] == password:
+    print(user[2])
+    stored_hash_pw=user[2].encode('utf-8')
+    if user[2]==password or bcrypt.checkpw(password.encode('utf-8'),stored_hash_pw) :
+    # if user and user[2] == password:
         print("right pwd")
         return jsonify({"message": "Login Successful","user_id":user[0],"user_role":user[3]})
     else:
@@ -57,19 +61,35 @@ def get_rooms():
 def get_bookings():
     print("Inside bookings")
     data=request.get_json()
-    userid=data
+    userid=data.get('userid')
+    userRole=data.get('userRole')
     print(userid)
+    print(userRole)
     cursor=mysql.connection.cursor()
-    cursor.execute("""
+    if userRole == 'staff':
+        print("got ot know that you are a stadff!!!")
+        cursor.execute("""
+    select b.id,g.name,r.room_type,b.check_in,b.check_out,r.room_number,r.price , b.userid 
+        from bookings b 
+        join guests g on b.guest_id = g.id 
+        join rooms r on b.room_id = r.id 
+        """,)
+        bookings=cursor.fetchall()
+        cursor.close()
+        booking_list=[{"id":booking[0],"guest_name":booking[1],"room_type":booking[2],"price":booking[6],"check_in":booking[3],"check_out":booking[4],"room_number":booking[5],"userid":booking[7]} for booking in bookings ]
+        return jsonify(booking_list)    
+    else:
+        cursor.execute("""
 select b.id,g.name,r.room_type,b.check_in,b.check_out,r.room_number,r.price
-    from bookings b 
-    join guests g on b.guest_id = g.id 
-    join rooms r on b.room_id = r.id where b.userid=%s
-    """,(userid,))
-    bookings=cursor.fetchall()
-    cursor.close()
-    booking_list=[{"id":booking[0],"guest_name":booking[1],"room_type":booking[2],"price":booking[6],"check_in":booking[3],"check_out":booking[4],"room_number":booking[5]} for booking in bookings ]
-    return jsonify(booking_list)
+        from bookings b 
+        join guests g on b.guest_id = g.id 
+        join rooms r on b.room_id = r.id where b.userid=%s
+        """,(userid,))
+        bookings=cursor.fetchall()
+        cursor.close()
+        booking_list=[{"id":booking[0],"guest_name":booking[1],"room_type":booking[2],"price":booking[6],"check_in":booking[3],"check_out":booking[4],"room_number":booking[5]} for booking in bookings ]
+        return jsonify(booking_list)
+
 
 @app.route("/book",methods=["POST"])
 def book_room():
@@ -137,6 +157,15 @@ def createUser():
     userPword=data.get("usrPword")
     userAge=data.get("usrAge")
    
+    def hash_password(text):   
+       salt=bcrypt.gensalt()
+       hashedPwd=bcrypt.hashpw(text.encode('utf-8'),salt)
+       return hashedPwd.decode('utf-8')
+
+    strongpwd=hash_password(userPword)
+    print(strongpwd) 
+    
+
     print("fetched user entry . . . ")
     cursor = mysql.connection.cursor()
     dupEmail= cursor.execute("select * from users where email = %s",(userEmail,)) 
@@ -156,7 +185,7 @@ def createUser():
         return jsonify({
             "message":"age"
         })
-    cursor.execute("insert into users(username,password,role,email,Pnumber,age) values (%s,%s,%s,%s,%s,%s)",(userName,userPword,"guest",userEmail,userPNumber,userAge))
+    cursor.execute("insert into users(username,password,role,email,Pnumber,age) values (%s,%s,%s,%s,%s,%s)",(userName,strongpwd,"guest",userEmail,userPNumber,userAge))
     mysql.connection.commit()
     cursor.close()
     return jsonify({
@@ -190,14 +219,15 @@ def cancel_booking():
     cursor.close()
     return jsonify({"message":"Booking canceled successfully"})
 
-@app.route("/chat",methods=['POST'])
+@app.route("/chat",methods=['POST','GET'])
 def chat():
     data=request.get_json()
     message=data.get('message','').lower()
-    response=process_chat_message(message)
+    token=data.get('token')
+    response=process_chat_message(message,token)
     return jsonify(response)
 
-def process_chat_message(message):
+def process_chat_message(message,token):
     print("processing chat")
     if "book" in message and ("single" in message or "double" in message or "suite" in message):
         room_type = "single" if "single" in message else "double" if "double" in message else "suite" 
@@ -209,7 +239,7 @@ def process_chat_message(message):
     elif "cancel" and "booking" in message and re.search(r'\d+',message):
         print("success")
         booking_id = re.search(r'\d+',message).group(0)
-        return cancel_booking_from_chat(booking_id)
+        return cancel_booking_from_chat(booking_id,token)
 
     elif "show bookings" in message or "my bookings" in message :
         return {
@@ -232,10 +262,11 @@ def process_chat_message(message):
                 }
 
 
-def cancel_booking_from_chat(booking_id):
+def cancel_booking_from_chat(booking_id,token):
     print("inside cancel bookig function")
+    userid=token 
     cursor=mysql.connection.cursor()
-    cursor.execute("select room_id from bookings where id = %s", (booking_id,))
+    cursor.execute("select * from bookings where id = %s", (booking_id,))
     booking_data=cursor.fetchone()
     if not booking_data:
         cursor.close()
@@ -245,6 +276,10 @@ def cancel_booking_from_chat(booking_id):
                 }
     room_id = booking_data[0]
     
+    if userid != booking_data[6] :
+        return {
+            "message":"you don't own this booking"
+        }
     cursor.execute("delete from bookings where id = %s", (booking_id,))
     mysql.connection.commit()
 
@@ -276,6 +311,38 @@ def fetch_room_price_from_chat(room_type):
                 "message":f"No {room_type} room found."
                 }
 
+
+
+
+GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateText"
+
+API_KEY = "AIzaSyCJ_TNN8SrTKaFw32TJ6y9oXsIpisTz8is"
+
+
+def get_cheapest_room(location):
+    """
+    Fetches the cheapest hotel booking price using Gemini API.
+    """
+    prompt = f"Find the cheapest hotel booking price in {location} with details."
+
+    # API Request Payload
+    payload = {
+        "prompt": {"text": prompt},
+        "temperature": 0.7
+    }
+
+    # Making the API request
+    response = requests.post(
+        f"{GEMINI_API_URL}?key={API_KEY}",
+        json=payload
+    )
+
+    if response.status_code == 200:
+        data = response.json()
+        return parse_hotel_data(data)
+    else:
+        print("Error:", response.json())
+        return None
 
 if __name__=="__main__":
     app.run(debug=True)

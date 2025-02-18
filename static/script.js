@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const sendButton = document.getElementById('sendButton');
   const createUsrBtn = document.getElementById('createUsrBtn');
   console.log("token created");
-  token  = localStorage.getItem('token');
+  //token  = localStorage.getItem('token');
   userRole = localStorage.getItem('userRole'); 
   if(loginForm) loginForm.addEventListener('submit',handleLogin); 
   if(bookingForm) bookingForm.addEventListener('submit',handleBooking);
@@ -126,8 +126,6 @@ function handleLogin(event){
       userRole=data.user_role;     
       localStorage.setItem('token',data.user_id);
       localStorage.setItem('userRole',data.user_role);
-      //if(userRole == 'guest' ):
-      //  showSection('guestPage');
       showSection('appContent');
       showAppContent();
   } else {
@@ -166,25 +164,25 @@ function fetchBookings(){
   fetch('http://127.0.0.1:5000/bookings',{
    method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(userid)
+    body:JSON.stringify({userid,userRole})
   })
     .then(response => response.json())
     .then(bookings => {
       const bookingList = document.getElementById('bookingList');
       bookingList.innerHTML='';
-      console.log("trying . . . ");
+      console.log("trying . . . ",bookings);
       bookings.forEach(booking => {
         const bookingCard = document.createElement('div');
        bookingCard.className = 'booking-card';
         bookingCard.innerHTML = `
         <h3>Booking for ${booking.guest_name}</h3>
-        <h6>User ID: ${token}</h6>
-        <h6>Booking ID: ${booking.id}</h6>
+        <h4>User ID: ${booking.userid}</h4>
+        <h4>Booking ID: ${booking.id}</h4>
         <p>Room Type: ${booking.room_type}</p>
         <p>Room Number: ${booking.room_number}</p>
         <p>Check-in: ${booking.check_in}</p>
-        <p>Check-out: ${booking.check_out}</p>]
-        <p>Price : ${booking.price}</p>]
+        <p>Check-out: ${booking.check_out}</p>
+        <p>Price : ${booking.price}</p>
         <button onclick="cancelBooking(${booking.id})">Cancel booking</button>
         `;
         bookingList.appendChild(bookingCard)
@@ -264,6 +262,7 @@ function cancelBooking(bookingId){
 }
 
 function handleChatSend(){
+  console.log(token)
   const messageInput=document.getElementById('chatInput');
   const message=messageInput.value.trim();
   if(!message) return;
@@ -272,7 +271,7 @@ function handleChatSend(){
   fetch('http://127.0.0.1:5000/chat',{
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({message:message})
+    body: JSON.stringify({message:message,token:token})
   })
     .then(response => response.json())
     .then(data => {
