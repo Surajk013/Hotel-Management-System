@@ -29,13 +29,13 @@ function handleUsrCreation(){
   console.log("redirection to  createUsr ");
   showSection('createUsr');
   console.log("hoping form is submitted");
-  const createuser = document.getElementById('createUsr');
+  const createuser = document.getElementById('createUsrForm');
   if(createuser)  createuser.addEventListener('submit',createUsr);
   console.log("submitted new user data to backend"); 
 }
 
 function createUsr(event){
-  console.log("inside createUse");
+  console.log("inside createUsr");
   event.preventDefault();
   const formData=new FormData(event.target);
   console.log("Got form");
@@ -65,7 +65,7 @@ function createUsr(event){
       }
       else if(data.message === 'created'){
         alert('User created successful ! ');
-        showSection('LoginForm');
+        showSection('loginForm');
       }
       else if(data.message === 'age'){
         alert('grow up kiddo, \n or ask your paernts ! ')
@@ -97,11 +97,14 @@ function showAppContent()
     fetchBookings();
     
   }
+  console.log("rooms fetched");
 }
 function showSection(sectionId){
   document.querySelectorAll('.content,#loginForm').forEach(section =>{
     section.classList.add('hidden');
   });
+  console.log(`Attempting to show section: ${sectionId}`);
+  console.log(document.getElementById(sectionId));
   document.getElementById(sectionId).classList.remove('hidden');
 }
 
@@ -120,8 +123,8 @@ function handleLogin(event){
       alert("Login Successful");
       token=data.user_id;
       userRole=data.user_role;     
-      //localStorage.setItem('token',data.user_id);
-      //localStorage.setItem('userRole',data.user_role);
+      localStorage.setItem('token',data.user_id);
+      localStorage.setItem('userRole',data.user_role);
       //if(userRole == 'guest' ):
       //  showSection('guestPage');
       showSection('appContent');
@@ -141,7 +144,7 @@ function fetchRooms(){
     .then(response => response.json())
     .then(rooms => {
       const roomgrid =document.getElementById('roomGrid');
-      roomGrid.innerHTML='';
+      roomgrid.innerHTML='';
       rooms.forEach(room => {
         const roomCard = document.createElement('div');
         roomCard.className='room-card';
@@ -151,7 +154,7 @@ function fetchRooms(){
           <p>Price: $${room.price}</p>
           <p>Status: ${room.status}</p>
           `;
-        roomGrid.appendChild(roomCard);
+        roomgrid.appendChild(roomCard);
       });
     })
     .catch(error => console.error('Error fetching rooms:',error));
@@ -161,7 +164,7 @@ function fetchBookings(){
   fetch('http://127.0.0.1:5000/bookings')
     .then(response => response.json())
     .then(bookings => {
-      const bookingsList = document.getElementById('bookingList');
+      const bookingList = document.getElementById('bookingList');
       bookingList.innerHTML='';
       console.log("trying . . . ");
       bookings.forEach(booking => {
