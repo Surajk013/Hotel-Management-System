@@ -10,12 +10,12 @@
   <body>
     <div class="header">
         <h1>Hotel Management System</h1>
-    </div>
-    <div id="loginForm" class = "form-container">
+       </div>
+    <div id="loginForm" class = "form-container ">
       <form id ="login">
         <div class="formElement">
           <label for="username">Username</label>
-          <input type="text" id="username" name="username" value="guest" required >
+          <input type="text" id="username" name="Username" value="guest" required >
         </div>
         <div class="formElement">
           <label for="password">Password</label>
@@ -28,32 +28,32 @@
     </div>
     
     <div id='createUsr' class="content hidden" > 
-      <form id="createUsr" class="form-container">
+      <form id="createUsrForm" class="form-container">
         <div class="formElement">
-          <label for="username">Username</label>
-          <input type="text" id="newUsr" name="newUsr" required>
+          <label for="newUsr">Username</label>
+          <input type="text" id="newUsr" name="NewUsr" required>
         </div>
         <div class="formElement">
-          <label for="email">Email</label>
-          <input type="email" id="newEmail" name="newEmail" required>
+          <label for="newEmail">Email</label>
+          <input type="email" id="newEmail" name="NewEmail" required>
         </div>
         <div class="formElement">
-          <label for="phoneNumber">Phone Number</label>
+          <label for="newPNumber">Phone Number</label>
           <input type="tel" id="newPNumber" pattern="\d{9,15}" class="phoneNumber" name="newPNumber" required>
         </div>
         <div class="formElement">
           <label for="age">Age</label>
-          <input type="age" id="age"  name="age" required>
+          <input type="age" id="age"  name="Age" required>
         </div>
         <div class="formElement">
           <label for="password">Password</label>
           <input type="password" id="Pword" name="Pword" required>
+        </div>
         <button type="submit" id="btn-createUsr">Create User</button>
       </form>
     </div>
 
-    <div id='appContent' class="hidden" > 
-    
+    <div id='appContent'  class="hidden" > 
       <div class="nav">
         <button onClick="showSection('rooms');fetchRooms()">Show Rooms</button>
         <button onClick="showSection('Bookings');fetchRooms()">My Bookings</button>
@@ -81,11 +81,11 @@
               </div>
               <div class="formElement">
                 <label>Email</label>
-                <input type="email" name="email"  value="asd@gmail.com" required>
+                <input type="email" name="Email"  value="asd@gmail.com" required>
               </div>
               <div class="formElement">
                 <label>Phone</label>
-                <input type="tel" name="phone" pattern="\d{9,15}" class="phoneNumber" value="213" required>
+                <input type="tel" name="phone" pattern="\d{9,15}" class="phoneNumber" value="4520000213" required>
               </div>
               <div class="formElement">
                 <label>Room Type</label>

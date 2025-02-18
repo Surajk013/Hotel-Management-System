@@ -44,11 +44,13 @@ def login():
 
 @app.route("/rooms",methods=["GET"])
 def get_rooms():
+    print("in get_rooms function")
     cursor = mysql.connection.cursor()
     cursor.execute("select * from rooms")
     rooms=cursor.fetchall()
     cursor.close()
     room_list = [{"id":room[0],"type":room[1],"number":room[2],"price":room[3],"status":room[4]}for room in rooms]
+    print("fetched all rooms , returning room list")
     return jsonify(room_list)
 
 @app.route("/bookings",methods=["GET"])
