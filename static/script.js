@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const sendButton = document.getElementById('sendButton');
   const createUsrBtn = document.getElementById('createUsrBtn');
   console.log("token created");
-  //token  = localStorage.getItem('token');
-  //userRole = localStorage.getItem('userRole'); 
+  token  = localStorage.getItem('token');
+  userRole = localStorage.getItem('userRole'); 
   if(loginForm) loginForm.addEventListener('submit',handleLogin); 
   if(bookingForm) bookingForm.addEventListener('submit',handleBooking);
   if(sendButton) sendButton.addEventListener('click',handleChatSend);
@@ -41,6 +41,7 @@ function createUsr(event){
   console.log("Got form");
   const newUsr={
     usrName: formData.get('newUsr'),
+    usrLName: formData.get('newLUsr'),
     usrEmail: formData.get('newEmail'),
     usrPNumber: formData.get('newPNumber'),
     usrPword: formData.get('Pword'),
@@ -161,7 +162,12 @@ function fetchRooms(){
 }
 
 function fetchBookings(){
-  fetch('http://127.0.0.1:5000/bookings')
+  const userid=token;
+  fetch('http://127.0.0.1:5000/bookings',{
+   method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(userid)
+  })
     .then(response => response.json())
     .then(bookings => {
       const bookingList = document.getElementById('bookingList');
@@ -172,9 +178,13 @@ function fetchBookings(){
        bookingCard.className = 'booking-card';
         bookingCard.innerHTML = `
         <h3>Booking for ${booking.guest_name}</h3>
+        <h6>User ID: ${token}</h6>
+        <h6>Booking ID: ${booking.id}</h6>
         <p>Room Type: ${booking.room_type}</p>
+        <p>Room Number: ${booking.room_number}</p>
         <p>Check-in: ${booking.check_in}</p>
         <p>Check-out: ${booking.check_out}</p>]
+        <p>Price : ${booking.price}</p>]
         <button onclick="cancelBooking(${booking.id})">Cancel booking</button>
         `;
         bookingList.appendChild(bookingCard)
@@ -185,6 +195,7 @@ function fetchBookings(){
 
 function handleBooking(event){
   event.preventDefault();
+  const userid=token;
   const formData=  new FormData(event.target);
   console.log("fetching the userrrrrrrrrrrrrrrrrr data to form");
   const booking = {
@@ -193,7 +204,8 @@ function handleBooking(event){
     phone: formData.get('phone'),
     roomType: formData.get('roomType'),
     checkIn: formData.get('checkIn'),
-    checkOut:formData.get('checkOut')
+    checkOut:formData.get('checkOut'),
+    token : userid
   };
   console.log(booking);
 
@@ -211,7 +223,11 @@ function handleBooking(event){
         fetchBookings();
         event.target.reset();
         showSection('bookings');
-      }else{
+      }else if(data.message ===  'verybad!'){
+        alert('the check in is after the checkout')
+      }
+
+      else{
         alert('Booking failed: '+data.message);
       }
     })
