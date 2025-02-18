@@ -231,6 +231,7 @@ def process_chat_message(message,token):
     print("processing chat")
     if "book" in message and ("single" in message or "double" in message or "suite" in message):
         room_type = "single" if "single" in message else "double" if "double" in message else "suite" 
+        print(room_type)
         return{
                 "action":"prompt_booking",
                 "message":f"Okay ! I can help with booking a {room_type} room for you."
@@ -256,10 +257,11 @@ def process_chat_message(message,token):
                 "action":"show_rooms",
                 "message":"fetching available rooms"
                 }
-        return {
-                "action":"unknown",
-                "message":"I can't understand that. Try booking a room, cancelling a booking , or asking for prices. OR pick a prompt from the prompt box below . For other queries contact : 5648972301. "
-                }
+    return 
+    {
+        "action":"unknown",
+        "message":"I can't understand that. Try booking a room, cancelling a booking , or asking for prices. OR pick a prompt from the prompt box below . For other queries contact : 5648972301. "
+    }
 
 
 def cancel_booking_from_chat(booking_id,token):
