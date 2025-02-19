@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS guests (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255),
-    phone VARCHAR(20)
+    phone VARCHAR(20),
+    userid INT
 );
 
 CREATE TABLE IF NOT EXISTS rooms (
@@ -32,10 +33,17 @@ CREATE TABLE IF NOT EXISTS bookings (
     check_in DATE NOT NULL,
     check_out DATE NOT NULL,
     booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    userid int ,
     FOREIGN KEY (guest_id) REFERENCES guests(id),
     FOREIGN KEY (room_id) REFERENCES rooms(id)
 );
 
+CREATE TABLE IF NOT EXISTS payment(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  bookingid INT NOT NULL,
+  paymentStatus VARCHAR(20) DEFAULT 'DUE',
+  FOREIGN KEY (bookingid) REFERENCES bookings(id)
+)
 
 INSERT INTO users (id,username, password,role,email,pNumber,age) VALUES
 (1,'guest1', 'password123','guest','t@gmail.com',1236597840,21),

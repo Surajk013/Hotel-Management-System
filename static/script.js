@@ -58,7 +58,10 @@ function createUsr(event){
 
   .then(response => response.json())
   .then(data => {
-      if(data.message === 'dupEmail'){
+      if(data.message === 'dupName'){
+        alert('A user already exits with this name...');
+      }
+    else if(data.message === 'dupEmail'){
         alert('A user already exits with this email...');
       }
       else if(data.message === 'dupNumber'){
@@ -150,7 +153,7 @@ function fetchRooms(){
         roomCard.innerHTML= `
         <h2>Room ${room.number}</h2>
           <p>Type: ${room.type}</p>
-          <p>Price: $${room.price}</p>
+          <p>Price: ₹${room.price}</p>
           <p>Status: ${room.status}</p>
           `;
         roomgrid.appendChild(roomCard);
@@ -182,13 +185,31 @@ function fetchBookings(){
         <p>Room Number: ${booking.room_number}</p>
         <p>Check-in: ${booking.check_in}</p>
         <p>Check-out: ${booking.check_out}</p>
-        <p>Price : ${booking.price}</p>
+        <p>Price : ₹${booking.price}</p>
         <button onclick="cancelBooking(${booking.id})">Cancel booking</button>
+        <button onclick="pay(${booking.id})">Pay</button>
         `;
         bookingList.appendChild(bookingCard)
       });
     })
     .catch(error => console.error('error fetching bookings:',error));
+}
+
+function pay(bookingid){
+  fetch('http://127.0.0.1:5000/pay',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({bookingid:bookingid})
+  })
+  .then(response => response.json())
+  .then(data=>{
+    console.log(data.message);
+    alert(data.message);
+  })
+  .catch(error => {
+    console.error("Error:",error);
+    alert("Payment failed. Please try again. ")
+  })
 }
 
 function handleBooking(event){
