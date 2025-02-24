@@ -161,39 +161,92 @@ function fetchRooms(){
     })
     .catch(error => console.error('Error fetching rooms:',error));
 }
-
 function fetchBookings(){
-  const userid=token;
-  fetch('http://127.0.0.1:5000/bookings',{
-   method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({userid,userRole})
+  const userid = token;
+  fetch('http://127.0.0.1:5000/bookings', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ userid, userRole })
   })
     .then(response => response.json())
     .then(bookings => {
       const bookingList = document.getElementById('bookingList');
-      bookingList.innerHTML='';
-      console.log("trying . . . ",bookings);
+      bookingList.innerHTML = '';
+      console.log("trying . . . ", bookings);
       bookings.forEach(booking => {
+        let adults = booking.adults || 0;
+        let children = booking.children || 0;
+
         const bookingCard = document.createElement('div');
-       bookingCard.className = 'booking-card';
+        bookingCard.className = 'booking-card';
         bookingCard.innerHTML = `
-        <h3>Booking for ${booking.guest_name}</h3>
-        <h4>User ID: ${booking.userid}</h4>
-        <h4>Booking ID: ${booking.id}</h4>
-        <p>Room Type: ${booking.room_type}</p>
-        <p>Room Number: ${booking.room_number}</p>
-        <p>Check-in: ${booking.check_in}</p>
-        <p>Check-out: ${booking.check_out}</p>
-        <p>Price : ₹${booking.price}</p>
-        <button onclick="cancelBooking(${booking.id})">Cancel booking</button>
-        <button onclick="pay(${booking.id})">Pay</button>
+          <h3>Booking for ${booking.guest_name}</h3>
+          <h4>User ID: ${booking.userid}</h4>
+          <h4>Booking ID: ${booking.id}</h4>
+          <p>Room Type: ${booking.room_type}</p>
+          <p>Room Number: ${booking.room_number}</p>
+          <p>Check-in: ${booking.check_in}</p>
+          <p>Check-out: ${booking.check_out}</p>
+          <p>Price : ₹${booking.price}</p>
+          <p>Adults: <span id="adults-${booking.id}">${adults}</span></p>
+          <p>Children: <span id="children-${booking.id}">${children}</span></p>
+          <button onclick="cancelBooking(${booking.id})">Cancel booking</button>
+          <button onclick="pay(${booking.id})">Pay</button>
+          <button onclick="addAdult(${booking.id})">Add Adult</button>
+          <button onclick="addChild(${booking.id})">Add Child</button>
         `;
-        bookingList.appendChild(bookingCard)
+        bookingList.appendChild(bookingCard);
       });
     })
-    .catch(error => console.error('error fetching bookings:',error));
+    .catch(error => console.error('Error fetching bookings:', error));
 }
+
+function addAdult(bookingId) {
+  const adultSpan = document.getElementById(`adults-${bookingId}`);
+  let currentCount = parseInt(adultSpan.innerText, 10);
+  adultSpan.innerText = currentCount + 1;
+}
+
+function addChild(bookingId) {
+  const childSpan = document.getElementById(`children-${bookingId}`);
+  let currentCount = parseInt(childSpan.innerText, 10);
+  childSpan.innerText = currentCount + 1;
+}
+
+
+//function fetchBookings(){
+//  const userid=token;
+//  fetch('http://127.0.0.1:5000/bookings',{
+//   method:'POST',
+//    headers:{'Content-Type':'application/json'},
+//    body:JSON.stringify({userid,userRole})
+//  })
+//    .then(response => response.json())
+//    .then(bookings => {
+//      const bookingList = document.getElementById('bookingList');
+//      bookingList.innerHTML='';
+//      console.log("trying . . . ",bookings);
+//      bookings.forEach(booking => {
+//        const bookingCard = document.createElement('div');
+//       bookingCard.className = 'booking-card';
+//        bookingCard.innerHTML = `
+//        <h3>Booking for ${booking.guest_name}</h3>
+//        <h4>User ID: ${booking.userid}</h4>
+//        <h4>Booking ID: ${booking.id}</h4>
+//        <p>Room Type: ${booking.room_type}</p>
+//        <p>Room Number: ${booking.room_number}</p>
+//        <p>Check-in: ${booking.check_in}</p>
+//        <p>Check-out: ${booking.check_out}</p>
+//        <p>Price : ₹${booking.price}</p>
+//        <button onclick="cancelBooking(${booking.id})">Cancel booking</button>
+//        <button onclick="pay(${booking.id})">Pay</button>
+//        <button onclick="addAdult(${booking.id})">Pay</button>
+//        `;
+//        bookingList.appendChild(bookingCard)
+//      });
+//    })
+//    .catch(error => console.error('error fetching bookings:',error));
+//}
 
 function pay(bookingid){
   fetch('http://127.0.0.1:5000/pay',{
