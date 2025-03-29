@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HMS</title>
+    <link href="../static/style.css" rel="stylesheet">
+    <script src="../static/script.js"></script>
+  </head>
+  <body>
+    <div class="header">
+        <h1>Hotel Management System</h1>
+       </div>
+    <div id="loginForm" class = "form-container ">
+      <form id ="login">
+        <div class="formElement">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="Username" value="guest" required >
+        </div>
+        <div class="formElement">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" value="dev" required >
+        </div>
+        <button type="submit" class="btn-submit">Login</button>
+        <br>Not a user? 
+        <button type="button" id="createUsrBtn" class="createUsrBtn">Create an Account</button>
+      </form>
+    </div>
+    
+    <div id='createUsr' class="content hidden" > 
+      <form id="createUsrForm" class="form-container">
+        <div class="formElement">
+          <label for="newUsr">Username</label>
+          <input type="text" id="newUsr" name="newUsr" required>
+        </div>
+        <div class="formElement">
+          <label for="newLUsr">Lname</label>
+          <input type="text" id="newLUsr" name="newLUsr" required>
+        </div>
+        <div class="formElement">
+          <label for="newEmail">Email</label>
+          <input type="email" id="newEmail" name="newEmail" required>
+        </div>
+        <div class="formElement">
+          <label for="newPNumber">Phone Number</label>
+          <input type="tel" id="newPNumber" pattern="\d{9,15}" class="phoneNumber" name="newPNumber" required>
+        </div>
+        <div class="formElement">
+          <label for="age">Age</label>
+          <input type="age" id="age"  name="age" required>
+        </div>
+        <div class="formElement">
+          <label for="password">Password</label>
+          <input type="password" id="Pword" name="Pword" required>
+        </div>
+        <button type="submit" id="btn-createUsr">Create User</button>
+      </form>
+    </div>
+
+    <div id='appContent'  class="hidden" > 
+      <div class="nav">
+        <button onClick="showSection('rooms');fetchRooms()">Show Rooms</button>
+        <button onClick="showSection('bookings');fetchBookings()">My Bookings</button>
+        <button onClick="showSection('newBookings');fetchRooms()">Book Room</button>
+        <button onClick="showSection('chatSection');fetchRooms()">AI Agent! </button>
+      </div>
+      <div class='container'>
+        <div id="rooms" class="content hidden">
+          <h1>Available Rooms</h1>
+          <div class="room-grid" id="roomGrid">            
+          </div>
+        </div>
+
+        <div id="bookings" class="content hidden">
+          <h2>My Bookings</h2>
+          <div id="bookingList"></div>
+        </div>
+        <div id="newBookings" class="content hidden">
+          <h1>New Booking</h1>
+          <div class="form-container">
+            <form id="bookingForm">
+              <div class="formElement">
+                <label>Guest Name</label>
+                <input type="text" name="guestName" value="asd" required>
+              </div>
+              <div class="formElement">
+                <label>Last name</label>
+                <input type="text" name="lastName" value="asd" required>
+              </div>
+              <div class="formElement">
+                <label>Email</label>
+                <input type="email" name="email"  value="asd@gmail.com" required>
+              </div>
+              <div class="formElement">
+                <label>Phone</label>
+                <input type="tel" name="phone" pattern="\d{9,15}" class="phoneNumber" value="4520000213" required>
+              </div>
+              <div class="formElement">
+                <label>Room Type</label>
+                <select name="roomType" required>
+                  <option value="single">Single</option>
+                  <option value="double">Double</option>
+                  <option value="Suite">Suite</option>
+                </select>
+              </div>
+              <div class="formElement">
+                <label>Check-in Date</label>
+                <input type="date" name="checkIn" value="2025-02-02" required>
+              </div>
+              <div class="formElement">
+                <label>Check-out Date</label>
+                <input type="date" name="checkOut" value="2025-02-25" required>
+              </div>
+              <button type="submit" class="btn-submit">Book Room</button>
+            </form>
+          </div>
+        </div>
+        <div id="chatSection" class="content hidden">
+          <h2>AI Agent</h2> <br> contact us @ 568987854202
+          <div class="chat-container">
+            <div class="chat-log" id="chatLog"></div>
+            <div class="chat-input-container">
+              <input type="text" id="chatInput" placeholder="Type your Message . . . "/>
+              <button id="sendButton">Send</button>
+            </div>
+            <div class="chat-prompts" id="chatPrompts">
+              <span onclick="setChatInput('Book a single room')">Book a single room</span>
+              <span onclick="setChatInput('Book a double room')">Book a double room</span>
+              <span onclick="setChatInput('Book a suite')">Book a suite </span>
+              <span onclick="setChatInput('Cancel Booking ID')">Cancel Booking \ID\ </span>
+              <span onclick="setChatInput('Show my bookings')">Show my bookings</span>
+              <span onclick="setChatInput('Show price for Single')">Show price for single</span>
+              <span onclick="setChatInput('Show price for double')">Show price for double</span>
+              <span onclick="setChatInput('Show price for suite')">Show price for suite</span>
+              <span onclick="setChatInput('Show available rooms')">Show available Rooms</span>
+
+              
+            </div>
+              
+            </div>
+            
+          </div>
+    </div>
+    </div>
+
+  </body>
+</html>

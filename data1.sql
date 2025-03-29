@@ -2,9 +2,10 @@
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL  UNIQUE,
+    fname VARCHAR(255) NOT NULL ,
+    lname VARCHAR(255) NOT NULL ,
     password VARCHAR(255) NOT NULL,
-     role ENUM('guest','staff','admin') DEFAULT 'guest',
+    role ENUM('guest','staff','admin') DEFAULT 'guest',
     email VARCHAR(255) NOT NULL UNIQUE,
     pNumber BIGINT NOT NULL UNIQUE,
     age INT NOT NULL  
@@ -12,10 +13,18 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS guests (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    fname VARCHAR(255) NOT NULL ,
+    lname VARCHAR(255) NOT NULL ,
     email VARCHAR(255),
     phone VARCHAR(20),
-    userid INT
+    age INT NOT NULL,
+    FOREIGNKEY (id) references users(id),
+    foreignkey (fname) references users(fname),
+    foreignkey (lname) reference users(lname),
+    foreignkey (email) references users(email),
+    foreignkey (phone) references users(pNumber),
+    foreignkey (age) references users(age)
+
 );
 
 CREATE TABLE IF NOT EXISTS rooms (
@@ -27,23 +36,31 @@ CREATE TABLE IF NOT EXISTS rooms (
 );
 
 CREATE TABLE IF NOT EXISTS bookings (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    Bid INT AUTO_INCREMENT PRIMARY KEY,
     guest_id INT NOT NULL,
     room_id INT NOT NULL,
     check_in DATE NOT NULL,
     check_out DATE NOT NULL,
+    nAdults INT NOT NULL,
+    nChildrens INT , 
     booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    userid int ,
+    bookingAmount INT NOT NULL,
+    netCharge INT NOT NULL,
+    paymentStatus ENUM('paid','due') DEFAULT 'due',
     FOREIGN KEY (guest_id) REFERENCES guests(id),
     FOREIGN KEY (room_id) REFERENCES rooms(id)
 );
 
-CREATE TABLE IF NOT EXISTS payment(
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  bookingid INT NOT NULL,
-  paymentStatus VARCHAR(20) DEFAULT 'DUE',
-  FOREIGN KEY (bookingid) REFERENCES bookings(id)
-)
+CREATE TABLE IF NOT EXISTS addons (
+  booking_id INT auto_increment primary key,
+  addon VARCHAR(20) ,
+  FOREIGN KEY(booking_id) REFERENCES bookings(Bid)
+);
+
+CREATE TABLE IF NOT EXISTS addon (
+  addonId INT NOT NULL,
+  addonType ENUM('ac','refreshments','doorstep','extraBed','roomDecoration','food','gym','pool','car','highSpeedWifi','launge')
+);
 
 INSERT INTO users (id,username, password,role,email,pNumber,age) VALUES
 (1,'guest1', 'password123','guest','t@gmail.com',1236597840,21),
@@ -131,36 +148,36 @@ INSERT INTO rooms (room_type, room_number, price) VALUES
 ('double', 235, 24947.38),
 ('suite', 301, 250.00),
 ('suite', 302, 250.00),
-('double', 303, 6441.6),
-('double', 304, 32667.91),
-('double', 305, 30038.37),
-('double', 306, 15913.29),
-('double', 307, 27998.53),
-('double', 308, 22866.89),
-('double', 309, 23815.64),
-('double', 310, 12269.44),
-('double', 311, 15594.64),
-('double', 312, 33254.5),
-('double', 313, 8114.86),
-('double', 314, 10977.9),
-('double', 315, 9055.50),
-('double', 316, 6576.43),
-('double', 317, 30807.72),
-('double', 318, 8754.23),
-('double', 319, 37748.39),
-('double', 320, 17787.70),
-('double', 321, 21412.40),
-('double', 322, 27772.9),
-('double', 323, 33308.49),
-('double', 324, 6188.0),
-('double', 325, 6005.43),
-('double', 326, 8609.16),
-('double', 327, 26095.85),
-('double', 328, 7893.53),
-('double', 329, 33585.59),
-('double', 330, 15953.69),
-('double', 331, 11942.55),
-('double', 332, 29072.79),
-('double', 333, 27105.7),
-('double', 334, 32229.9),
-('double', 335, 31480.21);
+('suite', 303, 6441.6),
+('suite', 304, 32667.91),
+('suite', 305, 30038.37),
+('suite', 306, 15913.29),
+('suite', 307, 27998.53),
+('suite', 308, 22866.89),
+('suite', 309, 23815.64),
+('suite', 310, 12269.44),
+('suite', 311, 15594.64),
+('suite', 312, 33254.5),
+('suite', 313, 8114.86),
+('suite', 314, 10977.9),
+('suite', 315, 9055.50),
+('suite', 316, 6576.43),
+('suite', 317, 30807.72),
+('suite', 318, 8754.23),
+('suite', 319, 37748.39),
+('suite', 320, 17787.70),
+('suite', 321, 21412.40),
+('suite', 322, 27772.9),
+('suite', 323, 33308.49),
+('suite', 324, 6188.0),
+('suite', 325, 6005.43),
+('suite', 326, 8609.16),
+('suite', 327, 26095.85),
+('suite', 328, 7893.53),
+('suite', 329, 33585.59),
+('suite', 330, 15953.69),
+('suite', 331, 11942.55),
+('suite', 332, 29072.79),
+('suite', 333, 27105.7),
+('suite', 334, 32229.9),
+('suite', 335, 31480.21);
